@@ -1,0 +1,2259 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>腾讯会议Bug热度榜</title>
+    <style>
+        :root {
+            --primary-color: #0066ff;
+            --secondary-color: #e6f0ff;
+        }
+
+        body {
+            font-family: "Microsoft YaHei", sans-serif;
+            margin: 0;
+            padding: 16px;
+
+
+
+
+
+
+
+
+            background-color: #f5f8ff;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        /* 新增头部图片样式 */
+        .header-banner {
+            background: linear-gradient(135deg, #006EFF, #00C4FF);
+            border-radius: 16px;
+
+
+
+
+
+
+
+
+            padding: 2.5rem;
+            margin: 0 auto 20px;
+            width: 720px;
+            box-shadow: 0 8px 32px rgba(0,110,255,0.15);
+            text-align: center;
+            color: white;
+            transition: transform 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .header-banner:hover {
+            transform: translateY(-2px);
+
+
+
+        }
+
+
+
+
+
+
+        .banner-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .banner-subtitle {
+            font-size: 1.2rem;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            opacity: 0.9;
+
+
+
+        }
+
+
+
+
+
+
+        /* 新增备注样式 */
+        .update-notice {
+            text-align: center;
+            color: #666;
+            margin: 0 auto 20px;
+            font-size: 0.95em;
+            padding: 12px;
+            background: #ffffff;
+            border-radius: 12px;
+            width: 720px;
+
+
+
+
+
+
+
+
+            box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+            box-sizing: border-box;
+        }
+
+        .category {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0,102,255,0.08);
+            margin: 0 auto 20px;
+            overflow: hidden;
+
+
+
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+
+
+
+
+            width: 100%;
+            max-width: 720px;
+        }
+
+        .category:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,102,255,0.12);
+        }
+
+        .category-header {
+            padding: 15px 20px;
+            background-color: var(--secondary-color);
+            cursor: pointer;
+
+
+
+            display: flex;
+
+
+
+
+
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .delete-category {
+            background-color: transparent;
+            color: #ff4757;
+            font-size: 18px;
+            padding: 0 5px;
+        }
+
+        .category-title {
+            cursor: text;
+
+
+
+            padding: 2px 5px;
+
+
+
+
+
+            border-radius: 4px;
+        }
+
+        .category-title:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .category-title.editing {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            outline: none;
+        }
+
+        .category-title {
+            font-size: 18px;
+
+
+
+            color: var(--primary-color);
+
+
+
+
+
+            font-weight: 500;
+        }
+
+        .item-list {
+            display: none;
+            padding: 10px 20px;
+        }
+
+        .item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .item:last-child {
+            border-bottom: none;
+        }
+
+        .item-name {
+
+
+
+            color: #333;
+        }
+
+        .item-content {
+
+
+
+
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .item-name {
+            cursor: pointer;
+            padding: 2px 5px;
+            border-radius: 4px;
+        }
+
+        .item-name:hover {
+            background-color: #f5f5f5;
+        }
+
+        .item-name.editing {
+
+
+
+            background-color: #fff;
+
+            border: 1px solid #ddd;
+
+
+
+
+            outline: none;
+        }
+
+        .count-input {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            color: var(--primary-color);
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .item-count {
+            color: var(--primary-color);
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .item-actions {
+
+
+
+            display: flex;
+            align-items: center;
+
+
+
+
+
+            gap: 5px;
+        }
+
+        .action-btn {
+            width: 24px;
+            height: 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+
+
+
+
+        .action-btn.delete {
+            background-color: #ffe6e6;
+
+
+
+
+
+            color: #ff4757;
+        }
+
+        .action-btn:hover {
+            opacity: 0.8;
+        }
+
+        .arrow {
+            border: solid var(--primary-color);
+            border-width: 0 2px 2px 0;
+            display: inline-block;
+            padding: 4px;
+            transform: rotate(45deg);
+            transition: transform 0.3s;
+
+
+
+        }
+
+        .expanded .arrow {
+
+
+
+
+
+            transform: rotate(-135deg);
+        }
+
+        .subtitle {
+            font-size: 16px;
+            color: #333;
+            font-weight: 500;
+            padding: 15px 0 10px;
+            margin-top: 5px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .subtitle:first-child {
+            margin-top: 0;
+        }
+
+
+
+    </style>
+</head>
+<body>
+
+
+
+
+
+
+  <div class="container">
+    <!-- 新增头部图片 -->
+    <div class="header-banner">
+        <div class="banner-title">腾讯会议Bug热度榜</div>
+        <div class="banner-subtitle">
+            <span>✨ 新鲜</span>
+            <span>🔥 热门</span>
+            <span>💡 有料</span>
+        </div>
+    </div>
+
+
+
+
+
+    <!-- 搜索功能 -->
+    <div id="searchBox" style="max-width: 720px; margin: 0 auto 20px; background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,102,255,0.08);">
+        <input type="text" id="searchInput" placeholder="输入关键字搜索..." 
+               style="width: calc(100% - 20px); padding: 10px; border: 1px solid #ddd; border-radius: 6px;
+                      margin-bottom: 10px; box-sizing: border-box;">
+        <div id="searchResults" style="max-height: 300px; overflow-y: auto;"></div>
+    </div>
+
+    <!-- 新增备注 -->
+    <div class="update-notice" style="display: flex; justify-content: space-between; align-items: center; padding: 12px;">
+        <span style="margin-right: auto;">📢 每周热点Bug，每周四更新</span>
+        <div style="display: flex; gap: 10px;">
+            <button id="weeklyBtn" onclick="showWeeklyHeat()" 
+
+
+
+                    style="padding: 8px 16px; 
+
+                           background: #00C4FF; 
+                           color: white; 
+                           border: none; 
+                           border-radius: 6px; 
+                           cursor: pointer;
+                           transition: all 0.3s ease;
+                           font-family: 'Microsoft YaHei', sans-serif;">
+                🕒 当周热度榜
+            </button>
+            <button id="historyBtn" onclick="showHistoryHeat()" 
+
+
+
+                    style="padding: 8px 16px; 
+
+                           background: var(--primary-color); 
+                           color: white; 
+                           border: none; 
+                           border-radius: 6px; 
+                           cursor: pointer;
+                           transition: all 0.3s ease;
+                           font-family: 'Microsoft YaHei', sans-serif;">
+                📊 历史热度榜
+            </button>
+
+            <button onclick="clearCache()" 
+
+
+
+                    style="padding: 8px 16px; 
+
+                           background: #00C4ff; 
+
+
+                           color: white; 
+                           border: none; 
+                           border-radius: 6px; 
+                           cursor: pointer; 
+                           transition: all 0.3s ease;">
+                🗑️ 清除缓存
+            </button>
+        </div>
+
+    </div>
+
+
+    <script>
+
+
+        // 刷新页面函数
+        function clearCache() {
+
+
+
+            if (confirm('确定要刷新页面吗？')) {
+                window.location.reload();
+            }
+        }
+
+
+
+    </script>
+
+    <div id="heatList"></div>
+    
+    <!-- 当周热度榜提示 -->
+    <div id="weeklyEmptyTip" style="display: none; max-width: 720px; margin: 20px auto; 
+         background: white; padding: 30px 40px 20px; border-radius: 12px; text-align: center;
+         box-shadow: 0 4px 16px rgba(0,102,255,0.08); color: #666;">
+        <div style="font-size: 24px; margin-bottom: 15px;">📭</div>
+        <h3 style="color: var(--primary-color); margin: 5px 0 15px;">当周热度榜</h3>
+        <p>每周四上午10点更新最新数据</p>
+
+
+    </div>
+    
+
+    <!-- 添加更新表单 -->
+
+
+    <div id="addProblemSection" style="max-width: 600px; margin: 30px auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,102,255,0.08);">
+
+
+        <div style="margin-bottom: 20px;">
+
+
+
+
+            <h3 style="color: var(--primary-color); margin-bottom: 15px;">添加新问题</h3>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+
+
+            <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+
+
+
+
+                <select id="categorySelect" style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 6px;">
+
+
+                    <option value="">选择已有类别...</option>
+                    <option value="new">+ 创建新类别</option>
+                </select>
+            </div>
+
+
+            <div id="newCategoryInputs" style="display: none; margin-bottom: 10px;">
+                <input type="text" id="newCategoryInput" placeholder="输入新类别名称" 
+
+
+
+
+
+
+                       style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 10px;">
+            </div>
+
+
+            <input type="text" id="descriptionInput" placeholder="问题描述" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 10px;">
+
+
+
+
+
+
+            <input type="number" id="countInput" placeholder="出现次数" min="1" value="1" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 10px;">
+
+
+
+
+
+            <button onclick="addNewIssue()" style="width: 100%; padding: 10px; background: var(--primary-color); color: white; border: none; border-radius: 6px; cursor: pointer;">
+                添加更新
+            </button>
+
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- 添加图表容器 -->
+
+
+
+    <div id="pieChartContainer" style="max-width: 600px; margin: 30px auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,102,255,0.08);">
+
+
+
+        <canvas id="pieChart"></canvas>
+
+    </div>
+</div>
+
+    <!-- 引入Chart.js库 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // 从localStorage获取数据，如果没有则使用默认数据
+
+
+        let data = JSON.parse(localStorage.getItem('crData')) || [
+            {
+                title: "一、代码风格与可读性",
+                children: [
+                    {
+
+
+
+                        subtitle: "函数设计",
+                        items: [
+
+
+
+                            { name: "避免长函数，分解为单一职责的子函数", count: 4 },
+                            { name: "函数命名需清晰达意", count: 3 },
+                            { name: "提前返回条件判断，减少嵌套层级", count: 3 },
+
+
+                            { name: "未使用的函数或参数需删除", count: 3 },
+
+
+
+                            { name: "避免魔数，使用常量或注释说明", count: 3 },
+
+
+
+                            { name: "构造函数无逻辑时用 default 声明", count: 2 },
+                            { name: "避免在函数内部使用过多 if/else 嵌套", count: 2 },
+
+
+                            { name: "函数参数使用 const & 传递不可变数据", count: 1 }
+                        ]
+                    },
+                    {
+                        subtitle: "命名规范",
+                        items: [
+
+
+
+
+
+                            { name: "变量、函数、类命名需准确，避免拼写错误", count: 3 },
+
+                            { name: "循环迭代器避免混淆命名（如 begin）", count: 1 },
+                            { name: "相同含义的命名需统一", count: 1 }
+                        ]
+                    },
+                    {
+                        subtitle: "注释与文档",
+                        items: [
+
+
+                            { name: "复杂逻辑或参数需补充注释", count: 3 },
+
+
+
+                            { name: "函数参数过多时标明含义", count: 1 },
+
+
+
+                            { name: "删除无用注释代码", count: 2 }
+                        ]
+                    }
+                ]
+            },
+            {
+                title: "二、安全性与健壮性",
+                children: [
+                    {
+                        subtitle: "字符串处理",
+                        items: [
+
+
+                            { name: "使用标准库函数处理字符串，避免安全问题", count: 1 }
+                        ]
+                    },
+                    {
+
+                        subtitle: "指针与生命周期",
+
+
+                        items: [
+
+
+
+                            { name: "关注指针生命周期，避免野指针", count: 1 }
+                        ]
+                    },
+                    {
+                        subtitle: "默认值与错误处理",
+                        items: [
+                            { name: "避免使用默认值获取数据", count: 1 },
+
+
+                            { name: "接口请求需处理失败场景，做好兜底逻辑", count: 1 }
+                        ]
+                    }
+                ]
+            },
+            {
+
+
+
+                title: "三、代码结构与组织",
+                children: [
+                    {
+
+
+
+                        subtitle: "工具函数与复用",
+                        items: [
+                            { name: "封装常用操作为工具函数", count: 3 },
+                            { name: "复用已有封装方法（如 Base 库或公共方法）", count: 1 }
+                        ]
+                    },
+
+
+                    {
+
+                        subtitle: "模块化与封装",
+
+                        items: [
+
+
+
+                            { name: "使用结构体统一接口参数", count: 2 },
+
+
+
+                            { name: "避免重复代码，抽取公共逻辑", count: 2 }
+                        ]
+                    },
+                    {
+                        subtitle: "标准库使用",
+                        items: [
+                            { name: "优先使用 std::find、std::priority_queue 等标准库", count: 1 },
+
+
+                            { name: "使用 contains 替代 find != end 判断 map 包含关系", count: 1 }
+                        ]
+                    }
+                ]
+            },
+
+            {
+
+
+                title: "四、控制结构与逻辑优化",
+
+                children: [
+
+                    {
+
+                        subtitle: "条件判断",
+                        items: [
+                            { name: "提前处理错误条件，减少嵌套", count: 2 },
+                            { name: "避免多层 if 嵌套，尽量前置 return", count: 2 }
+                        ]
+                    },
+
+
+                    {
+
+                        subtitle: "循环与性能",
+
+                        items: [
+
+
+
+
+
+                            { name: "避免主线程处理耗时逻辑（如 O(n) 遍历大列表）", count: 1 },
+
+                            { name: "数据预处理放在子线程", count: 1 }
+                        ]
+                    }
+                ]
+            },
+            {
+                title: "五、资源管理与生命周期",
+                children: [
+                    {
+                        subtitle: "缓存与数据清理",
+                        items: [
+
+
+
+
+                            { name: "单例服务需考虑切换账号时的缓存清理", count: 1 },
+
+
+
+
+                            { name: "整体 Review 切换账号场景的 Model 层数据", count: 1 }
+                        ]
+                    },
+                    {
+                        subtitle: "内存与资源",
+                        items: [
+                            { name: "避免随意复制代码导致内存覆盖（如通讯录业务）", count: 1 },
+
+                            { name: "删除无用代码时检查关联资源", count: 1 }
+                        ]
+                    }
+
+                ]
+            },
+            {
+
+
+
+                title: "六、性能与效率",
+                children: [
+                    {
+
+
+                        subtitle: "线程与异步",
+
+                        items: [
+                            { name: "耗时逻辑（如数据查询）放在子线程处理", count: 1 },
+                            { name: "子线程任务需监控策略（如灰度开关、卡顿上报）", count: 1 }
+                        ]
+                    },
+
+                    {
+
+                        subtitle: "预加载与流量",
+                        items: [
+
+
+
+
+
+                            { name: "数据预加载需谨慎，避免高频或大范围加载导致流量问题", count: 1 }
+
+                        ]
+                    }
+                ]
+            },
+            {
+                title: "七、日志与监控",
+                children: [
+                    {
+                        subtitle: "日志规范",
+                        items: [
+                            { name: "添加关键日志，便于问题定位", count: 2 },
+
+
+
+                            { name: "避免超频日志，精简必要内容", count: 1 },
+
+
+
+                            { name: "日志添加需求/业务标签", count: 1 }
+                        ]
+
+                    },
+
+                    {
+                        subtitle: "监控策略",
+                        items: [
+                            { name: "建立子线程监控看板（如识数平台上报数据）", count: 1 }
+                        ]
+                    }
+                ]
+            },
+            {
+                title: "八、代码维护与重构",
+
+                children: [
+                    {
+
+                        subtitle: "冗余代码处理",
+
+                        items: [
+
+
+
+                            { name: "删除未使用的变量、函数、宏", count: 3 },
+
+
+                            { name: "清理注释代码和废弃逻辑", count: 1 }
+                        ]
+                    },
+                    {
+                        subtitle: "宏管理",
+                        items: [
+                            { name: "减少宏数量，用对应宏包裹平台独有代码", count: 2 },
+
+
+                            { name: "公共文件无需宏包裹", count: 1 }
+                        ]
+                    }
+
+                ]
+            },
+
+
+            {
+                title: "九、协议与接口设计",
+
+                children: [
+                    {
+
+
+                        subtitle: "接口设计",
+                        items: [
+                            { name: "方法入参使用 const & 传递不可变数据", count: 1 },
+                            { name: "Model Call 返回值不用于返回数据", count: 1 },
+
+
+                            { name: "推动后台协议收归（如多条协议解析复用）", count: 1 }
+                        ]
+
+                    },
+                    {
+
+
+                        subtitle: "扩展与组合",
+                        items: [
+
+
+
+                            { name: "不同扩展尽量在统一容器组合，避免新增容器", count: 1 }
+                        ]
+                    }
+                ]
+            },
+            {
+                title: "十、跨平台与兼容性",
+                children: [
+                    {
+                        subtitle: "平台适配",
+                        items: [
+
+
+
+                            { name: "跨平台逻辑需充分验证对现有场景的影响", count: 1 },
+
+
+
+
+                            { name: "分平台抽离文件方法（如 NXUI 的 VM 使用 CreatState）", count: 1 }
+
+                        ]
+                    },
+                    {
+                        subtitle: "UI 与配置",
+                        items: [
+                            { name: "横竖屏切换时复用内容", count: 1 },
+
+                            { name: "配置内容区分硬编码与动态配置（如水牌样式）", count: 1 }
+                        ]
+                    }
+                ]
+
+            },
+            {
+
+
+
+                title: "十一、数据缓存与处理",
+                children: [
+                    {
+
+                        subtitle: "数据一致性",
+
+
+                        items: [
+                            { name: "避免多列表缓存覆盖（如通讯录业务）", count: 1 },
+                            { name: "数据下沉处理（如 Profile 逻辑下沉到 VM）", count: 1 }
+                        ]
+                    },
+                    {
+                        subtitle: "协议兼容",
+
+                        items: [
+
+
+
+
+                            { name: "PB/XMPP 协议修改需与模块 Owner 确认", count: 1 }
+
+                        ]
+                    }
+                ]
+
+            },
+            {
+
+                title: "十二、UI 与资源管理",
+                children: [
+                    {
+                        subtitle: "组件设计",
+                        items: [
+                            { name: "避免多余 UI 层级（如 NX 实现删除外层容器）", count: 1 },
+
+
+
+                            { name: "非交互元素不使用 NXButton", count: 1 }
+
+                        ]
+
+                    },
+                    {
+                        subtitle: "资源优化",
+
+                        items: [
+
+
+                            { name: "相同内容横竖屏复用", count: 1 },
+                            { name: "确认资源删除关联性", count: 1 }
+                        ]
+                    }
+                ]
+            },
+            {
+                title: "特殊条目（需单独说明）",
+                children: [
+                    {
+                        subtitle: "工具类优化",
+
+                        items: [
+
+
+
+
+                            { name: "使用 Variant helper 处理 AsXxxxx 调用", count: 1 },
+
+
+
+                            { name: "能力配置长度限制（如 URL 不超过 200 字节）", count: 1 }
+                        ]
+                    },
+                    {
+                        subtitle: "业务场景适配",
+                        items: [
+
+                            { name: "水牌需求需兼容新旧会中模式、深色/浅色模式", count: 1 },
+
+
+
+
+                            { name: "Cowork 素材系统需支持版本配置和批量上传", count: 1 }
+                        ]
+
+                    },
+                    {
+
+
+                        subtitle: "协议与数据流",
+                        items: [
+                            { name: "OnEventAuthorizeStateUpdate 需处理断网重连场景", count: 1 },
+                            { name: "信鸽推送点击逻辑需对齐多端", count: 1 }
+                        ]
+                    }
+                ]
+            }
+        ];
+
+
+
+        // 生成DOM结构
+
+
+        function renderList() {
+
+            const container = document.getElementById('heatList');
+            
+
+            data.forEach(category => {
+
+
+                const categoryDiv = document.createElement('div');
+                categoryDiv.className = 'category';
+                
+                // 渲染一级标题
+                const header = document.createElement('div');
+                header.className = 'category-header';
+                header.innerHTML = `
+
+                    <span class="category-title" onclick="makeCategoryEditable(this, '${category.title}')">${category.title}</span>
+
+
+
+                    <div class="header-actions">
+
+
+                        <button class="action-btn delete-category" title="删除分类">×</button>
+
+                        <i class="arrow"></i>
+
+                    </div>
+                `;
+
+                // 添加删除分类的事件监听
+                const deleteCategoryBtn = header.querySelector('.delete-category');
+                deleteCategoryBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (confirm('确定要删除这个分类及其所有内容吗？')) {
+
+                        deleteCategory(category);
+
+                    }
+
+                });
+                
+
+
+                const itemList = document.createElement('div');
+                itemList.className = 'item-list';
+                
+
+
+                // 渲染二级标题和内容
+
+                category.children.forEach(section => {
+                    // 添加二级标题
+                    const subtitleDiv = document.createElement('div');
+                    subtitleDiv.className = 'subtitle';
+                    subtitleDiv.textContent = section.subtitle;
+                    itemList.appendChild(subtitleDiv);
+                    
+                    // 添加具体内容项
+                    section.items.forEach((item, itemIndex) => {
+
+
+
+
+                        const itemDiv = document.createElement('div');
+
+                        itemDiv.className = 'item';
+                        itemDiv.innerHTML = `
+
+                            <div class="item-content">
+
+
+                                <span class="item-name" onclick="makeEditable(this, '${item.name}')">${item.name}</span>
+                                <div class="item-actions">
+                                    <input type="number" class="count-input" value="${item.count}" min="1" 
+
+
+                                           onchange="updateItemCount(this, ${itemIndex}, '${section.subtitle}')"
+
+
+
+
+                                           style="width: 50px; margin-right: 5px; padding: 2px 5px;">
+
+
+                                    <span class="item-count">次</span>
+                                    <button class="action-btn delete" title="删除">×</button>
+                                </div>
+                            </div>
+                        `;
+
+                        // 添加删除按钮事件
+                        const deleteBtn = itemDiv.querySelector('.delete');
+                        deleteBtn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+
+
+
+
+
+                            if (confirm('确定要删除这条记录吗？')) {
+                                deleteItem(category, section, itemIndex);
+                            }
+                        });
+
+
+                        itemList.appendChild(itemDiv);
+                    });
+
+                });
+
+
+                header.addEventListener('click', () => {
+                    itemList.style.display = itemList.style.display === 'block' ? 'none' : 'block';
+                    header.parentElement.classList.toggle('expanded');
+                });
+
+                categoryDiv.appendChild(header);
+                categoryDiv.appendChild(itemList);
+                container.appendChild(categoryDiv);
+            });
+        }
+
+
+
+        // 添加问题更新接口
+
+
+
+        function updateIssues(newIssues) {
+
+
+
+            // newIssues格式：[{category: "命名规范", description: "命名有拼写错误", count: 1}]
+            
+            // 遍历新增问题
+            newIssues.forEach(issue => {
+                // 在现有数据中查找对应类别
+                for (let category of data) {
+                    for (let child of category.children) {
+                        if (child.subtitle === issue.category) {
+
+
+                            // 查找是否已存在相同描述的问题
+
+
+
+                            let existingItem = child.items.find(item => 
+                                item.name.toLowerCase() === issue.description.toLowerCase()
+
+                            );
+                            
+
+                            if (existingItem) {
+
+                                // 如果存在，更新计数
+                                existingItem.count += issue.count;
+                            } else {
+                                // 如果不存在，添加新问题
+                                child.items.push({
+                                    name: issue.description,
+                                    count: issue.count
+                                });
+                            }
+                            break;
+                        }
+                    }
+                }
+            });
+
+
+
+
+            // 重新计算饼图数据
+
+
+            const pieData = calculatePieData();
+            
+            // 更新DOM
+
+            document.getElementById('heatList').innerHTML = '';
+
+            renderList();
+            
+
+            // 更新饼图
+            updatePieChart(pieData);
+        }
+
+        // 计算饼图数据
+        function calculatePieData() {
+            // 收集数据
+            const categoryData = data.map(category => {
+                let total = 0;
+
+                category.children.forEach(child => {
+
+                    child.items.forEach(item => {
+
+
+
+                        total += item.count;
+                    });
+                });
+
+                // 使用不带序号的分类名
+
+                const categoryName = category.title.split('、')[1];
+
+                return { name: categoryName, value: total };
+            });
+            
+            // 按照数值从大到小排序
+            categoryData.sort((a, b) => b.value - a.value);
+            
+            return {
+                labels: categoryData.map(item => item.name),
+
+
+
+                data: categoryData.map(item => item.value)
+
+            };
+
+        }
+
+        // 更新饼图
+
+        function updatePieChart(pieData) {
+
+
+            const ctx = document.getElementById('pieChart').getContext('2d');
+            if (window.myPieChart) {
+                window.myPieChart.destroy();
+            }
+            
+            window.myPieChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: pieData.labels,
+                    datasets: [{
+
+                        data: pieData.data,
+
+                        backgroundColor: [
+
+
+
+
+                            '#FF6384', '#FFCE56', '#E74C3C', '#4BC0C0', 
+
+
+                            '#2ECC71', '#36A2EB', '#9966FF', '#3498DB', 
+                            '#F1C40F', '#E67E22', '#FF9F40', '#8E44AD'
+                        ],
+
+                        borderWidth: 1
+
+                    }]
+                },
+
+
+
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+
+                            position: 'right',
+                            labels: {
+
+                                font: {
+
+                                    family: '"Microsoft YaHei", sans-serif'
+                                }
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Code Review 问题分布',
+                            font: {
+                                size: 16,
+                                family: '"Microsoft YaHei", sans-serif'
+
+                            }
+                        },
+
+                        tooltip: {
+
+                            callbacks: {
+
+
+                                label: function(context) {
+                                    const label = context.label || '';
+
+                                    const value = context.parsed || 0;
+
+
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = ((value / total) * 100).toFixed(1);
+                                    return `${label}: ${value}次 (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+
+                }
+            });
+        }
+
+
+        // 初始化
+
+
+
+        const initialPieData = calculatePieData();
+        renderList();
+        updatePieChart(initialPieData);
+
+
+
+        // 初始化类别选择器
+
+
+        function initCategorySelect() {
+            const select = document.getElementById('categorySelect');
+            // 获取所有二级分类
+            data.forEach(category => {
+                category.children.forEach(child => {
+                    const option = document.createElement('option');
+                    option.value = child.subtitle;
+                    option.textContent = child.subtitle;
+
+                    select.appendChild(option);
+                });
+            });
+
+
+
+
+
+            // 监听类别选择变化
+            select.addEventListener('change', function() {
+
+                const newCategoryInputs = document.getElementById('newCategoryInputs');
+
+
+                newCategoryInputs.style.display = this.value === 'new' ? 'block' : 'none';
+            });
+        }
+
+        // 渲染当周热度榜
+        function renderWeeklyList() {
+            const container = document.getElementById('weeklyEmptyTip');
+            container.innerHTML = `
+        <h3 style="color: var(--primary-color); margin-bottom: 10px;">当周热度榜</h3>
+        <div style="color: #666; margin-bottom: 15px; font-size: 0.9em;" id="weeklyDateRange"></div>
+                <div id="weeklyList" style="text-align: left; margin: 20px 0;"></div>
+            `;
+
+
+            const listContainer = document.getElementById('weeklyList');
+            listContainer.innerHTML = '';
+            
+
+            // 按次数排序
+            weeklyData.sort((a, b) => b.count - a.count);
+            
+            weeklyData.forEach((item, index) => {
+                const itemDiv = document.createElement('div');
+
+
+                itemDiv.className = 'weekly-item';
+
+
+                itemDiv.style = 'padding: 10px; border-bottom: 1px solid #eee;';
+                itemDiv.innerHTML = `
+
+
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div style="flex: 1;">
+                            <span style="color: #666; margin-right: 10px;">${index + 1}.</span>
+
+
+                            <span class="editable-text">${item.description}</span>
+
+                        </div>
+
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <input type="number" 
+                                   value="${item.count}" 
+                                   min="1" 
+                                   style="width: 60px; padding: 5px;"
+                                   onchange="updateWeeklyCount(${index}, this.value)">
+                            <span style="margin-left: 5px;">次</span>
+                            <button onclick="deleteWeeklyItem(${index})" 
+
+
+
+
+                                    style="padding: 5px 10px; background: #ff4757; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                                删除
+                            </button>
+
+                        </div>
+                    </div>
+                `;
+                
+
+                // 添加编辑功能
+                const textSpan = itemDiv.querySelector('.editable-text');
+                textSpan.addEventListener('click', () => {
+                    makeWeeklyEditable(textSpan, index);
+                });
+                
+                listContainer.appendChild(itemDiv);
+
+            });
+        }
+
+
+
+        // 更新当周问题次数
+
+        function updateWeeklyCount(index, value) {
+            weeklyData[index].count = parseInt(value) || 1;
+
+            localStorage.setItem('weeklyData', JSON.stringify(weeklyData));
+            renderWeeklyList();
+        }
+
+
+        // 删除当周问题
+        function deleteWeeklyItem(index) {
+            if (confirm('确定要删除这个问题吗？')) {
+                weeklyData.splice(index, 1);
+
+
+                localStorage.setItem('weeklyData', JSON.stringify(weeklyData));
+
+                renderWeeklyList();
+            }
+        }
+
+
+        // 更新当周时间显示
+        function updateWeeklyDate() {
+            const now = new Date();
+
+            const dayOfWeek = now.getDay(); // 0 = Sunday, 1 = Monday...
+
+            const monday = new Date(now);
+            monday.setDate(now.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
+            const sunday = new Date(monday);
+            sunday.setDate(monday.getDate() + 6);
+
+
+            const formatDate = (date) => {
+
+
+                return `${date.getFullYear()}.${(date.getMonth()+1).toString().padStart(2, '0')}.${date.getDate().toString().padStart(2, '0')}`;
+            };
+
+
+            document.getElementById('weeklyDateRange').textContent = 
+                `${formatDate(monday)} - ${formatDate(sunday)}`;
+        }
+
+        // 当周问题编辑功能
+        function makeWeeklyEditable(element, index) {
+            const originalText = element.textContent;
+
+            element.contentEditable = true;
+            element.focus();
+
+            
+            element.addEventListener('blur', function() {
+                element.contentEditable = false;
+                const newText = element.textContent.trim();
+
+                if (newText && newText !== originalText) {
+
+                    weeklyData[index].description = newText;
+
+
+                    localStorage.setItem('weeklyData', JSON.stringify(weeklyData));
+                }
+            });
+            
+            element.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    element.blur();
+
+                }
+            });
+        }
+
+
+        // 添加新问题
+        function addNewIssue() {
+            const categorySelect = document.getElementById('categorySelect');
+
+
+            const isWeeklyMode = document.getElementById('weeklyEmptyTip').style.display === 'block';
+
+            const newCategoryInput = document.getElementById('newCategoryInput');
+
+
+            const description = document.getElementById('descriptionInput').value;
+
+            const count = parseInt(document.getElementById('countInput').value) || 1;
+
+            let category = categorySelect.value;
+
+
+            // 处理新类别的情况
+
+            if (category === 'new') {
+                category = newCategoryInput.value.trim();
+                if (!category) {
+
+                    alert('请输入新类别名称！');
+                    return;
+                }
+            }
+
+
+            if (!category || !description) {
+
+
+                alert('请填写完整的问题信息！');
+                return;
+            }
+
+
+
+            // 如果是新类别，需要创建新的类别结构
+            if (categorySelect.value === 'new') {
+
+                // 查找最后一个类别的序号
+
+                const lastCategory = data[data.length - 1];
+                const newIndex = parseInt(lastCategory.title.split('、')[0]) + 1;
+                
+
+                // 创建新的类别
+                const newCategory = {
+
+                    title: `${newIndex}、${category}`,
+
+                    children: [{
+
+                        subtitle: category,
+                        items: []
+
+                    }]
+                };
+                
+
+                // 添加到数据中
+                data.push(newCategory);
+                
+                // 更新选择器
+
+                const option = document.createElement('option');
+
+                option.value = category;
+                option.textContent = category;
+                categorySelect.insertBefore(option, categorySelect.lastElementChild);
+            }
+
+
+            // 根据当前模式保存到不同数据集
+
+            if (isWeeklyMode) {
+                weeklyData.push({
+
+                    description: description,
+
+                    count: count,
+                    category: category
+                });
+                localStorage.setItem('weeklyData', JSON.stringify(weeklyData));
+                renderWeeklyList();
+            } else {
+                updateIssues([{
+
+                    category: category,
+                    description: description,
+
+                    count: count
+                }]);
+            }
+            
+            // 保存到localStorage
+
+            localStorage.setItem('crData', JSON.stringify(data));
+
+
+
+            // 清空输入
+
+            document.getElementById('descriptionInput').value = '';
+
+
+            document.getElementById('countInput').value = '1';
+
+            // 显示成功提示
+            alert('更新成功！');
+        }
+
+        // 删除项目函数
+        function deleteItem(category, section, itemIndex) {
+
+            // 从数组中删除该项
+
+            section.items.splice(itemIndex, 1);
+            
+
+            // 如果该分类下没有项目了，可以选择是否删除整个分类
+
+
+            if (section.items.length === 0) {
+
+                const categoryIndex = category.children.indexOf(section);
+
+                if (categoryIndex !== -1) {
+
+                    category.children.splice(categoryIndex, 1);
+                }
+            }
+            
+            // 更新DOM
+            document.getElementById('heatList').innerHTML = '';
+            renderList();
+            
+
+            // 更新饼图
+
+            updatePieChart(calculatePieData());
+            
+            // 保存到localStorage
+            localStorage.setItem('crData', JSON.stringify(data));
+
+        }
+
+
+
+        // 使文本可编辑
+
+        function makeEditable(element, originalText) {
+
+            if (element.classList.contains('editing')) return;
+            
+
+            element.classList.add('editing');
+            element.contentEditable = true;
+            element.focus();
+            
+            // 保存原始文本，用于取消编辑
+
+            element.dataset.originalText = originalText;
+            
+
+            // 添加事件监听器
+            element.addEventListener('blur', function onBlur() {
+                finishEditing(element);
+
+                element.removeEventListener('blur', onBlur);
+            });
+
+            
+
+
+            element.addEventListener('keydown', function onKeyDown(e) {
+                if (e.key === 'Enter') {
+
+                    e.preventDefault();
+
+                    element.blur();
+                } else if (e.key === 'Escape') {
+                    element.textContent = element.dataset.originalText;
+                    element.blur();
+                }
+            });
+        }
+
+
+        // 完成编辑
+
+        function finishEditing(element) {
+            element.classList.remove('editing');
+            element.contentEditable = false;
+            
+            const newText = element.textContent.trim();
+
+
+
+            const originalText = element.dataset.originalText;
+            
+
+            if (newText !== originalText && newText !== '') {
+
+                // 更新数据
+
+                updateItemText(originalText, newText);
+            } else if (newText === '') {
+                element.textContent = originalText;
+            }
+        }
+
+        // 更新项目文本
+
+        function updateItemText(originalText, newText) {
+
+            let updated = false;
+            data.forEach(category => {
+                category.children.forEach(section => {
+
+
+
+                    const item = section.items.find(item => item.name === originalText);
+
+                    if (item) {
+                        item.name = newText;
+                        updated = true;
+
+                    }
+                });
+            });
+
+            
+            if (updated) {
+                localStorage.setItem('crData', JSON.stringify(data));
+            }
+        }
+
+        // 更新项目次数
+
+        function updateItemCount(input, itemIndex, sectionTitle) {
+
+            const newCount = parseInt(input.value) || 1;
+            if (newCount < 1) {
+
+                input.value = 1;
+
+                return;
+
+            }
+            
+            data.forEach(category => {
+
+                category.children.forEach(section => {
+
+                    if (section.subtitle === sectionTitle) {
+
+                        if (section.items[itemIndex]) {
+                            section.items[itemIndex].count = newCount;
+                        }
+                    }
+                });
+            });
+            
+            // 更新饼图
+
+            updatePieChart(calculatePieData());
+
+            // 保存到localStorage
+            localStorage.setItem('crData', JSON.stringify(data));
+        }
+
+
+
+        // 使一级标题可编辑
+
+        function makeCategoryEditable(element, originalTitle) {
+
+            if (element.classList.contains('editing')) return;
+            
+
+
+            element.classList.add('editing');
+            element.contentEditable = true;
+            element.focus();
+            
+            // 保存原始文本
+            element.dataset.originalTitle = originalTitle;
+            
+
+            // 添加事件监听器
+
+            element.addEventListener('blur', function onBlur() {
+                finishCategoryEditing(element);
+                element.removeEventListener('blur', onBlur);
+            });
+            
+
+
+            element.addEventListener('keydown', function onKeyDown(e) {
+
+
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    element.blur();
+
+
+                } else if (e.key === 'Escape') {
+                    element.textContent = element.dataset.originalTitle;
+                    element.blur();
+                }
+            });
+        }
+
+        // 完成一级标题编辑
+
+        function finishCategoryEditing(element) {
+
+            element.classList.remove('editing');
+            element.contentEditable = false;
+            
+            const newTitle = element.textContent.trim();
+
+
+            const originalTitle = element.dataset.originalTitle;
+            
+
+
+            if (newTitle !== originalTitle && newTitle !== '') {
+                // 更新数据
+
+
+                updateCategoryTitle(originalTitle, newTitle);
+            } else if (newTitle === '') {
+                element.textContent = originalTitle;
+            }
+        }
+
+        // 更新一级标题
+
+        function updateCategoryTitle(originalTitle, newTitle) {
+
+            const category = data.find(cat => cat.title === originalTitle);
+            if (category) {
+
+
+                // 保持序号不变，只更新标题内容
+
+
+                const index = originalTitle.split('、')[0];
+
+
+                category.title = `${index}、${newTitle.split('、').pop()}`;
+                
+                // 保存到localStorage
+                localStorage.setItem('crData', JSON.stringify(data));
+                
+                // 更新DOM
+
+                document.getElementById('heatList').innerHTML = '';
+                renderList();
+
+                
+                // 更新饼图
+                updatePieChart(calculatePieData());
+                
+
+                // 更新类别选择器
+
+
+                const select = document.getElementById('categorySelect');
+
+
+
+                select.innerHTML = '<option value="">选择已有类别...</option><option value="new">+ 创建新类别</option>';
+                initCategorySelect();
+            }
+        }
+
+
+        // 删除整个分类
+        function deleteCategory(category) {
+            const index = data.indexOf(category);
+
+            if (index !== -1) {
+
+                data.splice(index, 1);
+                
+                // 更新剩余分类的序号
+                data.forEach((cat, idx) => {
+
+
+                    const title = cat.title.split('、');
+
+                    cat.title = `${idx + 1}、${title[1]}`;
+
+                });
+                
+
+                // 保存到localStorage
+                localStorage.setItem('crData', JSON.stringify(data));
+                
+
+                // 更新DOM
+                document.getElementById('heatList').innerHTML = '';
+
+                renderList();
+                
+                // 更新饼图
+
+                updatePieChart(calculatePieData());
+                
+                // 更新类别选择器
+
+                const select = document.getElementById('categorySelect');
+
+
+                select.innerHTML = '<option value="">选择已有类别...</option><option value="new">+ 创建新类别</option>';
+
+                initCategorySelect();
+
+            }
+        }
+
+        // 当周热度榜数据（完全由用户添加）
+        let weeklyData = JSON.parse(localStorage.getItem('weeklyData')) || [];
+
+
+        // 热度榜切换函数
+
+        function showWeeklyHeat() {
+            document.getElementById('heatList').style.display = 'none';
+
+            document.getElementById('pieChartContainer').style.display = 'none';
+
+            document.getElementById('weeklyEmptyTip').style.display = 'block';
+
+            document.getElementById('addProblemSection').style.display = 'block';
+            renderWeeklyList();
+            
+            // 更新按钮样式
+            document.getElementById('weeklyBtn').style.background = 'var(--primary-color)';
+
+
+            document.getElementById('historyBtn').style.background = '#00C4FF';
+        }
+
+        function showHistoryHeat() {
+
+            document.getElementById('heatList').style.display = 'block';
+
+            document.getElementById('addProblemSection').style.display = 'block';
+
+            document.getElementById('pieChartContainer').style.display = 'block';
+
+            document.getElementById('weeklyEmptyTip').style.display = 'none';
+            
+            // 更新按钮样式
+
+            document.getElementById('historyBtn').style.background = 'var(--primary-color)';
+
+            document.getElementById('weeklyBtn').style.background = '#00C4FF';
+        }
+
+
+        // 初始化时设置当周按钮为激活状态并显示内容
+        document.addEventListener('DOMContentLoaded', function() {
+
+            document.getElementById('weeklyBtn').style.background = 'var(--primary-color)';
+            document.getElementById('historyBtn').style.background = '#00C4FF';
+            showWeeklyHeat(); // 默认显示当周热度榜内容
+
+        });
+
+        // 搜索功能实现
+        function performSearch(keyword) {
+            const results = [];
+            const lowerKeyword = keyword.toLowerCase();
+            
+            // 搜索历史数据
+            data.forEach((category, catIndex) => {
+                category.children.forEach(section => {
+                    section.items.forEach((item, itemIndex) => {
+                        if (item.name.toLowerCase().includes(lowerKeyword)) {
+                            results.push({
+                                type: 'history',
+                                categoryIndex: catIndex,
+                                sectionIndex: category.children.indexOf(section),
+                                itemIndex: itemIndex,
+                                text: item.name
+                            });
+                        }
+                    });
+                });
+            });
+
+            // 搜索当周数据
+            weeklyData.forEach((item, index) => {
+                if (item.description.toLowerCase().includes(lowerKeyword)) {
+                    results.push({
+                        type: 'weekly',
+                        index: index,
+                        text: item.description
+                    });
+                }
+            });
+
+            const resultsContainer = document.getElementById('searchResults');
+            resultsContainer.innerHTML = '';
+            
+            if (results.length === 0) {
+                resultsContainer.innerHTML = '<div style="padding: 10px; color: #666;">未找到匹配结果</div>';
+                return;
+            }
+
+            results.forEach(result => {
+                const div = document.createElement('div');
+                div.style.padding = '10px';
+                div.style.borderBottom = '1px solid #eee';
+                div.style.cursor = 'pointer';
+                div.style.transition = 'background 0.2s';
+                div.innerHTML = result.text.replace(new RegExp(keyword, 'gi'), match => 
+                    `<span style="background: #ffeb3b; padding: 2px 4px; border-radius: 3px;">${match}</span>`
+                );
+                
+                div.addEventListener('click', () => {
+                    scrollToResult(result);
+                });
+                
+                resultsContainer.appendChild(div);
+            });
+        }
+
+        function scrollToResult(result) {
+            if (result.type === 'history') {
+                // 强制切换到历史热度榜
+                showHistoryHeat();
+                
+                // 等待DOM更新完成后执行滚动
+                setTimeout(() => {
+                    const categories = document.querySelectorAll('.category');
+                    if (categories[result.categoryIndex]) {
+                        const category = categories[result.categoryIndex];
+                        const itemList = category.querySelector('.item-list');
+                        
+                        // 确保分类展开
+                        itemList.style.display = 'block';
+                        category.classList.add('expanded');
+                    
+                        // 滚动到目标位置
+                        const targetItem = itemList.querySelectorAll('.item')[result.itemIndex];
+                        if (targetItem) {
+                            targetItem.style.animation = 'highlight 1.5s ease';
+                            targetItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            
+                            setTimeout(() => {
+                                targetItem.style.animation = '';
+                            }, 1500);
+                        }
+                    }
+                }, 50); // 给DOM更新留出时间
+            } else if (result.type === 'weekly') {
+                // 处理当周数据跳转
+                showWeeklyHeat(); // 切换到当周热度榜
+                const weeklyItems = document.querySelectorAll('#weeklyList .weekly-item');
+                if (weeklyItems[result.index]) {
+                    weeklyItems[result.index].style.animation = 'highlight 1.5s ease';
+                    weeklyItems[result.index].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    
+                    setTimeout(() => {
+                        weeklyItems[result.index].style.animation = '';
+                    }, 1500);
+                }
+            }
+        }
+
+        // 添加搜索输入监听
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const keyword = e.target.value.trim();
+            if (keyword.length > 1) {
+                performSearch(keyword);
+            } else {
+                document.getElementById('searchResults').innerHTML = '';
+            }
+        });
+
+        // 添加高亮动画
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes highlight {
+                0% { background: #ffeb3b; }
+                100% { background: transparent; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // 初始化
+        initCategorySelect();
+
+        // 绘制扇形图
+
+
+        const ctx = document.getElementById('pieChart').getContext('2d');
+        new Chart(ctx, {
+
+            type: 'pie',
+            data: {
+              labels: [
+
+                    '代码风格与可读性',    // 31
+                    '代码结构与组织',      // 10
+
+
+                    '代码维护与重构',      // 7
+
+
+                    '控制结构与逻辑优化',  // 6
+                    '日志与监控',          // 5
+
+                    '安全性与健壮性',      // 4
+
+
+                    '资源管理与生命周期',  // 4
+                    '协议与接口设计',      // 4
+
+                    '跨平台与兼容性',      // 4
+                    'UI与资源管理',        // 4
+
+                    '性能与效率',          // 3
+
+
+
+                    '数据缓存与处理'       // 3
+                ],
+                datasets: [{
+
+
+
+                    data: [31, 10, 7, 6, 5, 4, 4, 4, 4, 4, 3, 3],
+                    backgroundColor: [
+
+                        '#FF6384', // 红粉色
+                        '#FFCE56', // 黄色
+
+
+                        '#E74C3C', // 红色
+
+
+                        '#4BC0C0', // 青绿色
+                        '#2ECC71', // 绿色
+
+
+                        '#36A2EB', // 蓝色
+
+                        '#9966FF', // 紫色
+                        '#3498DB', // 天蓝色
+
+                        '#F1C40F', // 金黄色
+
+
+                        '#E67E22', // 深橙色
+
+
+                        '#FF9F40', // 橙色
+                        '#8E44AD'  // 深紫色
+
+                    ],
+                    borderWidth: 1
+                }]
+
+            },
+            options: {
+
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            font: {
+
+                                family: '"Microsoft YaHei", sans-serif'
+                            }
+                        }
+                    },
+
+                    title: {
+                        display: true,
+
+
+                        text: 'Code Review 问题分布',
+
+                        font: {
+                            size: 16,
+
+                            family: '"Microsoft YaHei", sans-serif'
+                        }
+                    },
+                    tooltip: {
+
+                        callbacks: {
+
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.parsed || 0;
+
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+
+
+
+                                const percentage = ((value / total) * 100).toFixed(1);
+
+                                return `${label}: ${value}次 (${percentage}%)`;
+                            }
+                        }
+                    }
+                }
+
+            }
+        });
+    </script>
+
+</body>
+</html>
+
+</html>
+
